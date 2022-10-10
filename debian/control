@@ -1,0 +1,30 @@
+Source: libcryptx-perl
+Maintainer: Debian Perl Group <pkg-perl-maintainers@lists.alioth.debian.org>
+Uploaders: Lucas Kanashiro <kanashiro@debian.org>
+Section: perl
+Testsuite: autopkgtest-pkg-perl
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               libjson-perl <!nocheck>,
+               libmath-bigint-perl <!nocheck>,
+               perl-xs-dev,
+               perl:native
+Standards-Version: 4.6.0
+Vcs-Browser: https://salsa.debian.org/perl-team/modules/packages/libcryptx-perl
+Vcs-Git: https://salsa.debian.org/perl-team/modules/packages/libcryptx-perl.git
+Homepage: https://metacpan.org/release/CryptX
+Rules-Requires-Root: no
+
+Package: libcryptx-perl
+Architecture: any
+Depends: ${misc:Depends},
+         ${perl:Depends},
+         ${shlibs:Depends},
+         libmath-bigint-perl
+Recommends: libjson-perl
+Description: Perl module that provides a self-contained cryptographic toolkit
+ CryptX is a self-contained cryptgraphico toolkit based on
+ https://github.com/libtom/libtomcrypt. It provides cyphers, block cipher
+ modes, authenticated encryption modes, hash functions, message authentication
+ codes, public key cryptography, cryptographically secure random number
+ generators, key derivation functions.

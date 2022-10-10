@@ -1,0 +1,167 @@
+libcryptx-perl (0.074-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.074.
+  * Update (test) dependencies.
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 10 Nov 2021 18:02:36 +0100
+
+libcryptx-perl (0.073-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream versions 0.070, 0.073.
+  * Use HTTPS for 2 URLs in debian/copyright. Thanks to duck.
+  * Update test and runtime dependencies.
+  * Update years of upstream copyright.
+  * Declare compliance with Debian Policy 4.6.0.
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 19 Sep 2021 02:25:39 +0200
+
+libcryptx-perl (0.069-1) unstable; urgency=medium
+
+  * Team upload.
+  * Update 'DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow' to '=+all'.
+  * Import upstream version 0.069.
+  * Update license terms for src/ltc/* and src/ltm/*.
+  * Bump debhelper-compat to 13.
+
+ -- gregor herrmann <gregoa@debian.org>  Fri, 28 Aug 2020 17:27:09 +0200
+
+libcryptx-perl (0.068-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.068.
+  * Set Rules-Requires-Root: no.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 14 Mar 2020 16:47:37 +0100
+
+libcryptx-perl (0.067-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.067.
+  * Update years of upstream copyright.
+  * Declare compliance with Debian Policy 4.5.0.
+  * Set upstream metadata fields: Bug-Submit, Repository, Repository-
+    Browse.
+  * Update short/long description.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 03 Feb 2020 20:31:12 +0100
+
+libcryptx-perl (0.066-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.066.
+  * Update Build-Depends for cross builds.
+  * Declare compliance with Debian Policy 4.4.1.
+  * Remove obsolete fields Name, Contact from debian/upstream/metadata.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 02 Nov 2019 02:31:52 +0100
+
+libcryptx-perl (0.064-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.064.
+  * debian/copyright: add a note about a new file.
+  * Annotate test-only build dependencies with <!nocheck>.
+  * Declare compliance with Debian Policy 4.4.0.
+  * Bump debhelper-compat to 12.
+  * debian/watch: use uscan version 4.
+  * debian/copyright: use HTTPS for some URLs.
+    Thanks: duck.
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 21 Jul 2019 22:45:13 -0300
+
+libcryptx-perl (0.063-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.063.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 01 Dec 2018 18:55:47 +0100
+
+libcryptx-perl (0.062-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.062.
+  * Declare compliance with Debian Policy 4.2.1.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 17 Nov 2018 20:03:51 +0100
+
+libcryptx-perl (0.061-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.061.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 23 Jun 2018 21:29:30 +0200
+
+libcryptx-perl (0.060-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.060.
+
+ -- gregor herrmann <gregoa@debian.org>  Thu, 17 May 2018 20:28:09 +0200
+
+libcryptx-perl (0.059-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ gregor herrmann ]
+  * debian/copyright: replace full CC0-1.0 text with pointer to
+    /usr/share/common-licenses/CC0-1.0.
+
+  [ Salvatore Bonaccorso ]
+  * Update Vcs-* headers for switch to salsa.debian.org
+
+  [ gregor herrmann ]
+  * Import upstream version 0.059.
+  * Update years of upstream copyright.
+  * Declare compliance with Debian Policy 4.1.4.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 09 Apr 2018 21:33:53 +0200
+
+libcryptx-perl (0.056-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.056.
+  * Add information about a new file to debian/copyright.
+  * Declare compliance with Debian Policy 4.1.3.
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 03 Jan 2018 20:44:21 +0100
+
+libcryptx-perl (0.055-1) unstable; urgency=medium
+
+  * Team upload
+
+  * New upstream version 0.055
+  * skip t/002_all_pm.t during autokpgtest smoke testing
+  * drop 001_fix-types.patch, applied upstream
+  * drop compilation-flags, applied upstream
+
+ -- Damyan Ivanov <dmn@debian.org>  Tue, 28 Nov 2017 16:05:25 +0200
+
+libcryptx-perl (0.054-1) unstable; urgency=medium
+
+  * Team upload
+
+  * New upstream version 0.054
+  * add compilation-flags.patch making CFLAGS/CPPFLAGS be applied by the build
+    process
+  * refresh 001_fix-typos.patch to apply cleanly
+  * bump years of upstream copyright
+  * d/copyright: add a stanza for src/ltc
+  * declare conformance with Policy 4.1.1
+
+ -- Damyan Ivanov <dmn@debian.org>  Sun, 19 Nov 2017 21:07:58 +0000
+
+libcryptx-perl (0.048-2) unstable; urgency=medium
+
+  * Add JSON dependencies as recommended: libjson-xs-perl | libjson-pp-perl |
+    libcpanel-json-xs-perl
+  * Fix upstream copyright
+
+ -- Lucas Kanashiro <kanashiro@debian.org>  Mon, 14 Aug 2017 14:48:18 -0300
+
+libcryptx-perl (0.048-1) unstable; urgency=low
+
+  * Initial Release. (Closes: #865828)
+
+ -- Lucas Kanashiro <kanashiro@debian.org>  Sun, 25 Jun 2017 00:00:42 -0300
