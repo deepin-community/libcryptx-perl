@@ -1,3 +1,58 @@
+libcryptx-perl (0.080-2) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Benedikt Spranger ]
+  * Step back to Debian architectural baseline.
+    The Debian architectural baseline states: amd64 x86_64 with no optional
+    extensions (psABI baseline). The core specification includes MMX, SSE and
+    SSE2 so these are OK, but SSE3 and up are not guaranteed.
+    Remove the SSE4.1 and AES compiler flags.
+    Closes: #1056399
+
+ -- gregor herrmann <gregoa@debian.org>  Fri, 24 Nov 2023 19:14:56 +0100
+
+libcryptx-perl (0.080-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.080.
+  * Drop debian/tests/pkg-perl/smoke-skip.
+    The skipped test is disabled by default.
+  * Update years of upstream copyright.
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 01 Nov 2023 21:30:50 +0100
+
+libcryptx-perl (0.078-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.078.
+  * Declare compliance with Debian Policy 4.6.2.
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 25 Jun 2023 04:26:17 +0200
+
+libcryptx-perl (0.077-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.077.
+  * Declare compliance with Debian Policy 4.6.1.
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 24 Aug 2022 17:43:48 +0200
+
+libcryptx-perl (0.076-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.076.
+  * Update years of upstream copyright.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 10 Jan 2022 21:30:27 +0100
+
+libcryptx-perl (0.075-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.075.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 25 Dec 2021 19:46:15 +0100
+
 libcryptx-perl (0.074-1) unstable; urgency=medium
 
   * Team upload.

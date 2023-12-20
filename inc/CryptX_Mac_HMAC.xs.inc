@@ -13,7 +13,7 @@ new(Class, char * hash_name, SV * key)
         int rv;
         int id;
 
-        id = _find_hash(hash_name);
+        id = cryptx_internal_find_hash(hash_name);
         if (id == -1) croak("FATAL: find_hash failed for '%s'", hash_name);
 
         if (!SvPOK(key)) croak("FATAL: key must be string/buffer scalar");
@@ -85,12 +85,12 @@ mac(Crypt::Mac::HMAC self)
           if (rv != CRYPT_OK) croak("FATAL: base64url_encode failed: %s", error_to_string(rv));
           RETVAL = newSVpvn(out, outlen);
         }
-        if (ix == 2) {
+        else if (ix == 2) {
           rv = base64_encode(mac, maclen, out, &outlen);
           if (rv != CRYPT_OK) croak("FATAL: base64_encode failed: %s", error_to_string(rv));
           RETVAL = newSVpvn(out, outlen);
         }
-        if (ix == 1) {
+        else if (ix == 1) {
           rv = base16_encode(mac, maclen, out, &outlen, 0);
           if (rv != CRYPT_OK) croak("FATAL: base16_encode failed: %s", error_to_string(rv));
           RETVAL = newSVpvn(out, outlen);
@@ -119,7 +119,7 @@ hmac(char * hash_name, SV * key, ...)
         char out[MAXBLOCKSIZE*2];
         hmac_state st;
 
-        int id = _find_hash(hash_name);
+        int id = cryptx_internal_find_hash(hash_name);
         if (id == -1) croak("FATAL: find_digest failed for '%s'", hash_name);
         rv = hmac_init(&st, id, k, (unsigned long)klen);
         if (rv != CRYPT_OK) croak("FATAL: hmac_init failed: %s", error_to_string(rv));
