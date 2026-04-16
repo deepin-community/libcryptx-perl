@@ -1,3 +1,69 @@
+libcryptx-perl (0.087-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.087.
+    Fixes CVE-2025-40914:
+    "CryptX embeds a version of the libtommath library that is susceptible to
+    an integer overflow associated with CVE-2023-36328."
+    Closes: #1107697
+  * Install new SECURITY.md document.
+  * Declare compliance with Debian Policy 4.7.2.
+  * Remove Rules-Requires-Root: no.
+  * Update 3rd-party filename in debian/copyright.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 11 Aug 2025 00:21:57 +0200
+
+libcryptx-perl (0.085-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.085.
+  * Update years of upstream copyright.
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 15 Feb 2025 22:14:12 +0100
+
+libcryptx-perl (0.084-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.084.
+
+ -- gregor herrmann <gregoa@debian.org>  Sun, 27 Oct 2024 20:50:22 +0100
+
+libcryptx-perl (0.082.001-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.082.001.
+    Closes: #1084502
+
+ -- gregor herrmann <gregoa@debian.org>  Tue, 15 Oct 2024 00:55:40 +0200
+
+libcryptx-perl (0.082-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.082.
+  * Drop 0001-Fix-SSH-RSA-key-decryption-on-64-bit-big-endian-host.patch
+    (fixed differently upstream).
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 07 Oct 2024 17:28:20 +0200
+
+libcryptx-perl (0.081-2) unstable; urgency=medium
+
+  * Team upload.
+  * Add patch from Niko Tyni to fix SSH RSA key decryption
+    on 64-bit big endian hosts. (Closes: #1082952)
+
+ -- gregor herrmann <gregoa@debian.org>  Wed, 02 Oct 2024 20:19:12 +0200
+
+libcryptx-perl (0.081-1) unstable; urgency=medium
+
+  * Team upload.
+  * Import upstream version 0.081.
+  * Drop x86_64-baseline.patch, the compiler flags have been removed from
+    Makefile.PL.
+  * Update years of upstream copyright.
+  * Declare compliance with Debian Policy 4.7.0.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 16 Sep 2024 21:08:49 +0200
+
 libcryptx-perl (0.080-2) unstable; urgency=medium
 
   * Team upload.

@@ -4,7 +4,7 @@ Upstream-Contact: Karel Miko
 Upstream-Name: CryptX
 
 Files: *
-Copyright: 2013-2023, DCIT, a.s. https://www.dcit.cz / Karel Miko
+Copyright: 2013-2025, DCIT, a.s. https://www.dcit.cz / Karel Miko
 License: Artistic or GPL-1+
 
 Files: ppport.h
@@ -62,7 +62,7 @@ License: public-domain
   https://www.ecrypt.eu.org/stream/rabbitpf.html
   https://web.archive.org/web/20090630021733/http://www.ecrypt.eu.org/stream/phorum/read.php?1,1244
 
-Files: src/ltm/bn_mp_prime_strong_lucas_selfridge.c
+Files: src/ltm/mp_prime_strong_lucas_selfridge.c
 Copyright: public domain
 License: public-domain
  Despite the general non-copyright statement, the file contains the comment

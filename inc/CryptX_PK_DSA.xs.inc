@@ -93,6 +93,75 @@ _import(Crypt::PK::DSA self, SV * key_data)
     }
 
 void
+_import_pkcs8(Crypt::PK::DSA self, SV * key_data, SV * passwd)
+    PPCODE:
+    {
+        int rv;
+        unsigned char *data = NULL;
+        STRLEN data_len = 0;
+        password_ctx pw_ctx = { cryptx_internal_password_cb_getpw, cryptx_internal_password_cb_free, passwd };
+
+        data = (unsigned char *)SvPVbyte(key_data, data_len);
+        if (self->key.type != -1) { dsa_free(&self->key); self->key.type = -1; }
+        if (SvOK(passwd)) {
+          rv = dsa_import_pkcs8(data, (unsigned long)data_len, &pw_ctx, &self->key);
+        }
+        else {
+          rv = dsa_import_pkcs8(data, (unsigned long)data_len, NULL, &self->key);
+        }
+        if (rv != CRYPT_OK) croak("FATAL: dsa_import_pkcs8 failed: %s", error_to_string(rv));
+        XPUSHs(ST(0)); /* return self */
+    }
+
+void
+_import_pem(Crypt::PK::DSA self, SV * key_data, SV * passwd)
+    PPCODE:
+    {
+        int rv;
+        unsigned char *data = NULL;
+        STRLEN data_len = 0;
+        password_ctx pw_ctx = { cryptx_internal_password_cb_getpw, cryptx_internal_password_cb_free, passwd };
+        ltc_pka_key key_from_pem;
+
+        data = (unsigned char *)SvPVbyte(key_data, data_len);
+        if (self->key.type != -1) { dsa_free(&self->key); self->key.type = -1; }
+        if (SvOK(passwd)) {
+          rv = pem_decode_pkcs(data, (unsigned long)data_len, &key_from_pem, &pw_ctx);
+        }
+        else {
+          rv = pem_decode_pkcs(data, (unsigned long)data_len, &key_from_pem, NULL);
+        }
+        if (rv != CRYPT_OK) croak("FATAL: pem_decode_pkcs failed: %s", error_to_string(rv));
+        if (key_from_pem.id != LTC_PKA_DSA) croak("FATAL: pem_decode_pkcs decoded non-DSA key");
+        self->key = key_from_pem.u.dsa;
+        XPUSHs(ST(0)); /* return self */
+    }
+
+void
+_import_openssh(Crypt::PK::DSA self, SV * key_data, SV * passwd)
+    PPCODE:
+    {
+        int rv;
+        unsigned char *data = NULL;
+        STRLEN data_len = 0;
+        password_ctx pw_ctx = { cryptx_internal_password_cb_getpw, cryptx_internal_password_cb_free, passwd };
+        ltc_pka_key key_from_pem;
+
+        data = (unsigned char *)SvPVbyte(key_data, data_len);
+        if (self->key.type != -1) { dsa_free(&self->key); self->key.type = -1; }
+        if (SvOK(passwd)) {
+          rv = pem_decode_openssh(data, (unsigned long)data_len, &key_from_pem, &pw_ctx);
+        }
+        else {
+          rv = pem_decode_openssh(data, (unsigned long)data_len, &key_from_pem, NULL);
+        }
+        if (rv != CRYPT_OK) croak("FATAL: pem_decode_openssh failed: %s", error_to_string(rv));
+        if (key_from_pem.id != LTC_PKA_DSA) croak("FATAL: pem_decode_openssh decoded non-DSA key");
+        self->key = key_from_pem.u.dsa;
+        XPUSHs(ST(0)); /* return self */
+    }
+
+void
 _import_hex(Crypt::PK::DSA self, char *p, char *q, char *g, char *x, char *y)
     PPCODE:
     {
@@ -139,19 +208,19 @@ is_private(Crypt::PK::DSA self)
     OUTPUT:
         RETVAL
 
-int
+size_t
 size(Crypt::PK::DSA self)
     CODE:
         if (self->key.type == -1 || self->key.qord <= 0) XSRETURN_UNDEF;
-        RETVAL = mp_unsigned_bin_size(self->key.p);
+        RETVAL = mp_ubin_size(self->key.p);
     OUTPUT:
         RETVAL
 
-int
+size_t
 size_q(Crypt::PK::DSA self)
     CODE:
         if (self->key.type == -1 || self->key.qord <= 0) XSRETURN_UNDEF;
-        RETVAL = mp_unsigned_bin_size(self->key.q);
+        RETVAL = mp_ubin_size(self->key.q);
     OUTPUT:
         RETVAL
 
@@ -159,16 +228,16 @@ SV*
 key2hash(Crypt::PK::DSA self)
     PREINIT:
         HV *rv_hash;
-        long siz, qsize, psize;
+        size_t siz, qsize, psize;
         char buf[20001];
         SV **not_used;
     CODE:
         if (self->key.type == -1 || self->key.qord <= 0) XSRETURN_UNDEF;
-        qsize = mp_unsigned_bin_size(self->key.q);
-        psize = mp_unsigned_bin_size(self->key.p);
+        qsize = mp_ubin_size(self->key.q);
+        psize = mp_ubin_size(self->key.p);
         rv_hash = newHV();
         /* g */
-        siz = (self->key.g) ? mp_unsigned_bin_size(self->key.g) : 0;
+        siz = (self->key.g) ? mp_ubin_size(self->key.g) : 0;
         if (siz>10000) {
           croak("FATAL: key2hash failed - 'g' too big number");
         }
@@ -180,7 +249,7 @@ key2hash(Crypt::PK::DSA self)
           not_used = hv_store(rv_hash, "g", 1, newSVpv("", 0), 0);
         }
         /* q */
-        siz = (self->key.q) ? mp_unsigned_bin_size(self->key.q) : 0;
+        siz = (self->key.q) ? mp_ubin_size(self->key.q) : 0;
         if (siz>10000) {
           croak("FATAL: key2hash failed - 'q' too big number");
         }
@@ -192,7 +261,7 @@ key2hash(Crypt::PK::DSA self)
           not_used = hv_store(rv_hash, "q", 1, newSVpv("", 0), 0);
         }
         /* p */
-        siz = (self->key.p) ? mp_unsigned_bin_size(self->key.p) : 0;
+        siz = (self->key.p) ? mp_ubin_size(self->key.p) : 0;
         if (siz>10000) {
           croak("FATAL: key2hash failed - 'p' too big number");
         }
@@ -204,7 +273,7 @@ key2hash(Crypt::PK::DSA self)
           not_used = hv_store(rv_hash, "p", 1, newSVpv("", 0), 0);
         }
         /* x */
-        siz = (self->key.x) ? mp_unsigned_bin_size(self->key.x) : 0;
+        siz = (self->key.x) ? mp_ubin_size(self->key.x) : 0;
         if (siz>10000) {
           croak("FATAL: key2hash failed - 'x' too big number");
         }
@@ -216,7 +285,7 @@ key2hash(Crypt::PK::DSA self)
           not_used = hv_store(rv_hash, "x", 1, newSVpv("", 0), 0);
         }
         /* y */
-        siz = (self->key.y) ? mp_unsigned_bin_size(self->key.y) : 0;
+        siz = (self->key.y) ? mp_ubin_size(self->key.y) : 0;
         if (siz>10000) {
           croak("FATAL: key2hash failed - 'y' too big number");
         }
