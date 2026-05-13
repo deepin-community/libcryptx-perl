@@ -1,14 +1,12 @@
 libcryptx-perl (0.080-2deepin1) unstable; urgency=medium
 
-  * Team upload.
+  * Fix CVE-2025-40914: integer overflow in embedded libtommath.
 
-  [ deepin-ci-robot ]
-  * Fix CVE-2025-40914: integer overflow vulnerability in embedded libtommath.
-    The embedded libtommath library contains CVE-2023-36328 which can lead to
-    memory corruption and potential remote code execution.
-    This patch adds bounds checking to prevent negative values from being passed
-    to size parameters in multiple functions.
-  * CVE-2025-40912: not-affected (version 0.080 > fixed version 0.065)
+ -- deepin-ci-robot <packages@deepin.org>  Wed, 13 May 2026 14:30:41 +0800
+
+libcryptx-perl (0.080-2) unstable; urgency=medium
+
+  * Team upload.
 
   [ Benedikt Spranger ]
   * Step back to Debian architectural baseline.
