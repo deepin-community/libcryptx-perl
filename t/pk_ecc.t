@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 121;
+use Test::More tests => 146;
 
 use Crypt::PK::ECC qw(ecc_encrypt ecc_decrypt ecc_sign_message ecc_verify_message ecc_sign_hash ecc_verify_hash ecc_shared_secret);
 use Crypt::Misc qw(read_rawfile);
@@ -107,6 +107,11 @@ use Crypt::Misc qw(read_rawfile);
   ok(length $sig > 60, 'sign_hash ' . length($sig));
   ok($pu1->verify_hash($sig, $hash, 'SHA1'), 'verify_hash');
 
+  $hash = pack("H*", "04624fae618e9ad0c5e479f62e1420c71fff34dd");
+  $sig = $pr1->sign_hash_eth($hash, 'SHA1');
+  ok(length $sig == 65, 'sign_hash_eth ' . length($sig));
+  ok($pu1->verify_hash_eth($sig, $hash), 'verify_hash_eth');
+
   my $pr2 = Crypt::PK::ECC->new;
   $pr2->import_key('t/data/cryptx_priv_ecc2.der');
   my $pu2 = Crypt::PK::ECC->new;
@@ -200,4 +205,157 @@ for my $pub (qw/openssl_ec-short.pub.pem openssl_ec-short.pub.der/) {
   ok(!exists($k->key2hash->{curve_oid}), "key2hash curve_oid doesn't exist");
   eval { $k->export_key_der('private_short'); };
   ok($@, "export_key_der invalid auto oid");
+}
+
+{
+  my $k = Crypt::PK::ECC->new;
+  ok($k->generate_key('secp256k1'), 'generate_key secp256k1');
+  my $pub = $k->export_key_raw('public');
+  my $hash = pack("H*","04624fae618e9ad0c5e479f62e1420c71fff34dd");
+  my $sig = $k->sign_hash_eth($hash, 'SHA1');
+  my $rk = Crypt::PK::ECC->new;
+  $rk->generate_key('secp256k1');
+  ok($rk->recovery_pub_eth($sig, $hash), 'recovery eth pub ok');
+  my $recid = ord(substr($sig, -1)) - 27;
+  ok($rk->recovery_pub_eth($sig, $hash, $recid), 'recovery eth pub ok with recid');
+  is($rk->export_key_raw('public'), $pub, 'recovery eth pub key matched');
+}
+
+{
+  my $k = Crypt::PK::ECC->new;
+  ok($k->generate_key('secp256k1'), 'generate_key secp256k1');
+  my $pub = $k->export_key_raw('public');
+  my $hash = pack("H*","04624fae618e9ad0c5e479f62e1420c71fff34dd");
+  my $sig = $k->sign_hash($hash, 'SHA1');
+  my $rk = Crypt::PK::ECC->new;
+  $rk->generate_key('secp256k1');
+  ok($rk->recovery_pub($sig, $hash, 0), 'recovery pub with 0 bit ok');
+  my $pub0 = $rk->export_key_raw('public');
+  ok($rk->recovery_pub($sig, $hash, 1), 'recovery pub with 1 bit ok');
+  my $pub1 = $rk->export_key_raw('public');
+  ok($pub0 eq $pub || $pub1 eq $pub, 'recovery pub key matched');
+}
+
+{
+  my $k = Crypt::PK::ECC->new;
+  ok($k->generate_key('secp256k1'), 'generate_key secp256k1');
+  my $pub = $k->export_key_raw('public');
+  my $hash = pack("H*","04624fae618e9ad0c5e479f62e1420c71fff34dd");
+  my $sig = $k->sign_hash_rfc7518($hash, 'SHA1');
+  my $rk = Crypt::PK::ECC->new;
+  $rk->generate_key('secp256k1');
+  ok($rk->recovery_pub_rfc7518($sig, $hash, 0), 'recovery pub rfc7518 with 0 bit ok');
+  my $pub0 = $rk->export_key_raw('public');
+  ok($rk->recovery_pub_rfc7518($sig, $hash, 1), 'recovery pub rfc7518 with 1 bit ok');
+  my $pub1 = $rk->export_key_raw('public');
+  ok($pub0 eq $pub || $pub1 eq $pub, 'recovery rfc7518 pub key matched');
+}
+
+{
+  ## https://github.com/DCIT/perl-CryptX/issues/110
+  sub check_one {
+    my ($should_pass, $name, $key) = @_;
+    if ($should_pass) {
+      my $k = eval { Crypt::PK::ECC->new(\$key) };
+      diag($@) if $@;
+      ok($k, $name);
+    }
+    else {
+      my $k = eval { Crypt::PK::ECC->new(\$key) };
+      ok(!$k, $name);
+    }
+  }
+  check_one(
+    1, # should PASS
+    'normal multi-line/public',
+    '-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2
+/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==
+-----END PUBLIC KEY-----'
+  );
+  check_one(
+    1, # should PASS
+    'normal multi-line/private',
+    '-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIFF9oAGC6vxNLIU8D+nuvM8ms1QQlPtpGzQTfzEBVB06oAoGCCqGSM49
+AwEHoUQDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2/AoZ/6wNqC9AoUCEpQempFg0
+aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==
+-----END EC PRIVATE KEY-----',
+  );
+  check_one(
+    1, # should PASS
+    'narrow multi-line/public',
+    '-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD
+QgAE3VU0nT1p5W0zKHDknAgQpsOODuM2
+/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP
+0uW0HG1YwCnOF8N0D8Q2RR2mlw==
+-----END PUBLIC KEY-----'
+  );
+  check_one(
+    1, # should PASS
+    'narrow multi-line/private',
+    '-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIFF9oAGC6vxNLIU8D+nuvM8m
+s1QQlPtpGzQTfzEBVB06oAoGCCqGSM49
+AwEHoUQDQgAE3VU0nT1p5W0zKHDknAgQ
+psOODuM2/AoZ/6wNqC9AoUCEpQempFg0
+aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2m
+lw==
+-----END EC PRIVATE KEY-----',
+  );
+  check_one(
+    0, # should FAIL
+    'single line/public',
+    '-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==-----END PUBLIC KEY-----'
+  );
+  check_one(
+    0, # should FAIL
+    'single line/private',
+    '-----BEGIN EC PRIVATE KEY-----MHcCAQEEIFF9oAGC6vxNLIU8D+nuvM8ms1QQlPtpGzQTfzEBVB06oAoGCCqGSM49AwEHoUQDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==-----END EC PRIVATE KEY-----',
+  );
+  check_one(
+    0, # should FAIL
+    'tall multi-line/public',
+    '-----BEGIN PUBLIC KEY-----
+
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2
+
+/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==
+
+-----END PUBLIC KEY-----'
+  );
+  check_one(
+    0, # should FAIL
+    'tall multi-line/private',
+    '-----BEGIN EC PRIVATE KEY-----
+
+MHcCAQEEIFF9oAGC6vxNLIU8D+nuvM8ms1QQlPtpGzQTfzEBVB06oAoGCCqGSM49
+
+AwEHoUQDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2/AoZ/6wNqC9AoUCEpQempFg0
+
+aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==
+
+-----END EC PRIVATE KEY-----',
+  );
+  check_one( # this one *hangs* 0.081
+    0, # should FAIL
+    'weird multi-line',
+    '-----BEGIN PUBLIC KEY-----
+MHcCAQEEIFF9oAGC6vxNLIU8D+nuvM8ms1QQlPtp
+GzQTfzEBVB06oAoGCCqGSM49AwEHoUQDQgAE3VU0
+nT1p5W0zKHDknAgQpsOODuM2/AoZ/6wNqC9AoUCE
+pQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2m
+lw==-----END PUBLIC KEY-----'
+  );
+  check_one(
+    1, # should PASS
+    'LF/public',
+    "\n-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2\n/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==\n-----END PUBLIC KEY-----\n"
+  );
+  check_one(
+    1, # should PASS
+    'CR+LF/public',
+    "\r\n-----BEGIN PUBLIC KEY-----\r\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3VU0nT1p5W0zKHDknAgQpsOODuM2\r\n/AoZ/6wNqC9AoUCEpQempFg0aBqxleOP0uW0HG1YwCnOF8N0D8Q2RR2mlw==\r\n-----END PUBLIC KEY-----\r\n"
+  );
 }
