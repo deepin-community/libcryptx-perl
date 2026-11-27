@@ -1,2 +1,1 @@
-x86_64-baseline.patch
-fix-cve-2023-36328-integer-overflow.patch
+fix-GHSA-24c2-gp6c-24c6.patch
